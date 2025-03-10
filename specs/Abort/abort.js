@@ -4,7 +4,7 @@ import exec from 'k6/execution';
 
 export const options = {
     vus: 10,
-    duration: '50s' 
+    duration: '50s'
 }
 
 export function setup() {
