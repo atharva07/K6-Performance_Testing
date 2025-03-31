@@ -43,4 +43,21 @@ export default function() {
             }
         }
     );
+
+    let res1 = http.post(
+        'https://test-api.k6.io/my/crocodiles/',
+        JSON.stringify(
+            {
+                name: "Random croc",
+                sex: "M",
+                date_of_birth: "1900-10-28"
+            }
+        ),
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + accessToken
+            }
+        }
+    );
 }
