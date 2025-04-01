@@ -1,3 +1,4 @@
+import { check } from 'k6';
 import http from 'k6/http'
 
 export default function() {
@@ -35,29 +36,87 @@ export default function() {
         const accessToken = res.json().access;
         console.log(accessToken);
 
-    http.get(
-        "https://test-api.k6.io/my/crocodiles/",
-        {
-            headers: {
-                Authorization: 'Bearer ' + accessToken
-            }
-        }
-    );
-
-    let res1 = http.post(
-        'https://test-api.k6.io/my/crocodiles/',
-        JSON.stringify(
+        http.get(
+            "https://test-api.k6.io/my/crocodiles/",
             {
-                name: "Random croc",
-                sex: "M",
-                date_of_birth: "1900-10-28"
+                headers: {
+                    Authorization: 'Bearer ' + accessToken
+                }
             }
-        ),
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + accessToken
+        );
+
+        let res1 = http.post(
+            'https://test-api.k6.io/my/crocodiles/',
+            JSON.stringify(
+                {
+                    name: "Random croc",
+                    sex: "M",
+                    date_of_birth: "1900-10-28"
+                }
+            ),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + accessToken
+                }
             }
-        }
-    );
-}
+        );
+
+        const newCrocodileId = res1.json().id;
+
+        let res2 = http.get(
+            `https://test-api.k6.io/my/crocodiles/${newCrocodileId}/`,
+            {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken
+                }
+            }
+        );
+
+        check(res2, {
+            'status is 200': (r) => r.status === 200,
+            'crocodile id': (r) => r.json().id === newCrocodileId
+        });
+
+        let res3 = http.put(
+            `https://test-api.k6.io/my/crocodiles/${newCrocodileId}/`,
+            JSON.stringify(
+                {
+                    name: "update Random croc",
+                    sex: "M",
+                    date_of_birth: "1900-10-28"
+                }
+            ),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + accessToken
+                }
+            }
+        );
+
+        let res4 = http.patch(
+            `https://test-api.k6.io/my/crocodiles/${newCrocodileId}/`,
+            JSON.stringify(
+                {
+                    sex: "F",
+                }
+            ),
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + accessToken
+                }
+            }
+        );
+
+        let res5 = http.del(
+            `https://test-api.k6.io/my/crocodiles/${newCrocodileId}/`,
+            null,
+            {
+                headers: {
+                    Authorization: 'Bearer ' + accessToken
+                }
+            }
+        );
+}  
