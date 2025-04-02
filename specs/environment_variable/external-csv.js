@@ -6,7 +6,5 @@ const userCredentials = new SharedArray('users with credentials', function () {
 });
 
 export default function () {
-
     userCredentials.forEach((item) => console.log(item.username));
-
 }
